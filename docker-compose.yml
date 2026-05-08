@@ -4,9 +4,9 @@ services:
   postgres:
     image: postgres:16
     environment:
-      POSTGRES_USER: catverse
-      POSTGRES_PASSWORD: catverse
-      POSTGRES_DB: catverse
+      POSTGRES_USER: meownet
+      POSTGRES_PASSWORD: meownet
+      POSTGRES_DB: meownet
     ports:
       - "5432:5432"
 
