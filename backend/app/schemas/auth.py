@@ -1,12 +1,11 @@
-from pydantic import BaseModel
-from pydantic import EmailStr
-
+from pydantic import BaseModel, EmailStr, Field
 
 # Payload for registration
 class RegisterRequest(BaseModel):
     username: str
     email: EmailStr
-    password: str
+    # Prevent bcrypt overflow issue
+    password: str = Field(min_length=6, max_length=72)
 
 
 # Payload for login
