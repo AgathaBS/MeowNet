@@ -16,10 +16,13 @@ class User(Base):
     # Automatically indexed for faster lookups
     id = Column(Integer, primary_key=True, index=True)
 
+    # Unique username
+    username = Column(String, unique=True, index=True)
+
     # User email column
     # unique=True prevents duplicate emails
     # index=True improves search performance
     email = Column(String, unique=True, index=True)
 
-    # User password column
+    # Hashed password only
     password = Column(String)

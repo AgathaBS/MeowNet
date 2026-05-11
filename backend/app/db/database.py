@@ -1,8 +1,13 @@
-# Import create_engine to establish the database connection
+# Import create_engine to establish database connection
 from sqlalchemy import create_engine
 
 # Import SQLAlchemy ORM utilities
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base
+
+# Import application settings
+from app.core.config import settings
+
 
 
 # PostgreSQL connection URL format:
@@ -27,3 +32,17 @@ SessionLocal = sessionmaker(
 # Base class for all ORM models
 # Every SQLAlchemy model will inherit from Base
 Base = declarative_base()
+
+# Dependency injection for FastAPI routes
+# Automatically opens and closes DB sessions
+def get_db():
+
+    # Create new database session
+    db = SessionLocal()
+
+    try:
+        yield db
+
+    finally:
+        # Always close session after request
+        db.close()
