@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from app.db.database import engine, Base
-
+from app.routes.auth import router as auth_router
 from app.models import user, cat, post
 
 # Create FastAPI application instance
@@ -11,6 +11,8 @@ app = FastAPI()
 # This runs at startup and ensures tables exist in PostgreSQL
 Base.metadata.create_all(bind=engine)
 
+# Register auth routes
+app.include_router(auth_router)
 
 # Root endpoint
 # Simple health check / welcome route
