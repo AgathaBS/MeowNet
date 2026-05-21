@@ -1,6 +1,7 @@
 # Import SQLAlchemy column types
-from sqlalchemy import Column, Integer, String
-
+from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy.orm import relationship
+from datetime import datetime, timezone
 # Import the Base class from the database configuration
 from app.db.database import Base
 
@@ -26,3 +27,20 @@ class User(Base):
 
     # Hashed password only
     password = Column(String)
+
+    created_at = Column(
+    DateTime(timezone=True),
+    default=lambda: datetime.now(timezone.utc))
+
+    # One-to-one relationship with profile
+    profile = relationship(
+        "Profile",
+        back_populates="user",
+        uselist=False
+    )
+
+    # One-to-many relationship with cats
+    cats = relationship(
+        "Cat",
+        back_populates="owner"
+    )
