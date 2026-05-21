@@ -25,8 +25,10 @@ app.add_middleware(
 # This runs at startup and ensures tables exist in PostgreSQL.
 Base.metadata.create_all(bind=engine)
 
-# Register authentication routes
+# Register  routes
 app.include_router(auth_router)
+app.include_router(profile.router, prefix="/api/v1")
+app.include_router(cat.router, prefix="/api/v1")
 
 # Root endpoint
 # Simple health check / welcome route
