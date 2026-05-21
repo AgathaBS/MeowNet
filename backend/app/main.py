@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.db.database import engine, Base
 from app.routes.auth import router as auth_router
-from app.models import user, cat, post
+from app.models import user, cat, post , profile
 
 # Create FastAPI application instance
 app = FastAPI()
