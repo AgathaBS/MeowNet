@@ -43,4 +43,7 @@ class Cat(Base):
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     # Relationship back to user
-    user = relationship("User", back_populates="Cat")
+    owner = relationship(
+        "User",
+        back_populates="cats"
+    )

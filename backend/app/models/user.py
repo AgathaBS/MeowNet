@@ -32,15 +32,17 @@ class User(Base):
     DateTime(timezone=True),
     default=lambda: datetime.now(timezone.utc))
 
-    # One-to-one relationship with profile
+     # One-to-one relationship with profile
     profile = relationship(
         "Profile",
         back_populates="user",
-        uselist=False
+        uselist=False,
+        cascade="all, delete"
     )
 
     # One-to-many relationship with cats
     cats = relationship(
         "Cat",
-        back_populates="owner"
+        back_populates="owner",
+        cascade="all, delete"
     )
