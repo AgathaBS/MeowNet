@@ -2,9 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.db.database import engine, Base
-from app.routes.auth import router as auth_router
 from app.models import user, cat, post , profile
-from app.routes import profile, cat
+from app.routes import profile, cat, auth
 
 # Create FastAPI application instance
 app = FastAPI()
@@ -27,7 +26,7 @@ app.add_middleware(
 Base.metadata.create_all(bind=engine)
 
 # Register  routes
-app.include_router(auth_router)
+app.include_router(auth.router, prefix="/api/v1/auth")
 app.include_router(profile.router, prefix="/api/v1")
 app.include_router(cat.router, prefix="/api/v1")
 

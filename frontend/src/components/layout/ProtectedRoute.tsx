@@ -8,11 +8,11 @@ interface Props {
 }
 
 export default function ProtectedRoute({ children }: Props) {
-  const isAuthenticated = useAuthStore(
-    (state) => state.isAuthenticated
-  );
+  const token = useAuthStore((state) => state.token);
 
-  // Prevent unauthenticated users from accessing protected pages.
+  const isAuthenticated = !!token;
+
+  // Block access if no valid token exists.
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }

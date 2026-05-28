@@ -15,7 +15,6 @@ from app.services.auth_service import authenticate_user
 from app.core.security import create_access_token
 
 router = APIRouter(
-    prefix="/auth",
     tags=["Authentication"]
 )
 
