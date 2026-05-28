@@ -5,9 +5,12 @@ from jose import JWTError, jwt
 
 from app.db.database import get_db
 from app.models.user import User
-from app.core.config import SECRET_KEY, ALGORITHM
+from app.core.config import settings  # ✅ FIX
 
-# This tells FastAPI where to get the token from
+# Map config values (keep your current system)
+SECRET_KEY = settings.JWT_SECRET
+ALGORITHM = settings.JWT_ALGORITHM
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 def get_current_user(
@@ -25,7 +28,6 @@ def get_current_user(
     )
 
     try:
-        # Decode token
         payload = jwt.decode(
             token,
             SECRET_KEY,
@@ -40,7 +42,6 @@ def get_current_user(
     except JWTError:
         raise credentials_exception
 
-    # Fetch user from DB
     user = db.query(User).filter(User.id == int(user_id)).first()
 
     if user is None:
