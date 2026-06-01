@@ -7,14 +7,14 @@ import { useAuthStore } from "../store/auth.store"
  Automatically injects JWT token into requests.
 */
 
-export const apiClient = axios.create({
+export const api = axios.create({
   baseURL: "http://localhost:8000/api/v1",
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-apiClient.interceptors.request.use(
+api.interceptors.request.use(
   (config) => {
     const token = useAuthStore.getState().token;
 
