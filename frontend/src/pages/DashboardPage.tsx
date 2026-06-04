@@ -1,5 +1,5 @@
 import { useAuthStore } from "../store/auth.store";
-
+import { Link } from "react-router-dom";
 import { useMyProfileQuery } from "../hooks/useProfile";
 import { useMyCatsQuery } from "../hooks/useCats";
 
@@ -32,7 +32,14 @@ export default function DashboardPage() {
         <p className="mb-8 text-gray-600">
           You are successfully authenticated.
         </p>
-
+        {/* NAV ACTIONS */}
+        <div className="mb-8">
+        <Link to="/profile"
+            className="inline-block rounded-lg bg-blue-500 px-4 py-2 text-white transition hover:bg-blue-600"
+          >
+          Go to Profile
+        </Link>
+        </div>
         {/* Profile Section */}
         <div className="mb-8">
           <h2 className="mb-3 text-2xl font-semibold">

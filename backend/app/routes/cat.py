@@ -8,7 +8,7 @@ from app.services import cat_service
 from app.dependencies.auth import get_current_user
 from app.models.user import User
 
-router = APIRouter(prefix="/cats", tags=["Cats"])
+router = APIRouter()
 
 
 @router.post("/", response_model=CatResponse)
@@ -40,4 +40,21 @@ def get_my_cats(
     return cat_service.get_user_cats(
         db,
         current_user
+    )
+
+@router.delete("/{cat_id}")
+def delete_cat(
+    cat_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Delete a cat owned by the
+    authenticated user.
+    """
+
+    return cat_service.delete_cat(
+        db,
+        current_user,
+        cat_id,
     )

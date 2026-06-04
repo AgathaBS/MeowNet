@@ -1,53 +1,79 @@
-from datetime import datetime, timezone
-from datetime import timedelta
-from jose import jwt
+from datetime import datetime, timedelta, timezone
+
+from jose import jwt, JWTError
 from passlib.context import CryptContext
+
+from fastapi import Depends, HTTPException, status
+from fastapi.security import (
+    HTTPBearer,
+    HTTPAuthorizationCredentials,
+)
 
 from app.core.config import settings
 
-# Password hashing configuration
+
+# -----------------------------------------------------
+# PASSWORD HASHING
+# -----------------------------------------------------
+
 pwd_context = CryptContext(
     schemes=["bcrypt"],
-    deprecated="auto"
+    deprecated="auto",
 )
 
 
-# Hash plain password
 def hash_password(password: str) -> str:
+    """
+    Hash a plain password using bcrypt.
+    """
     return pwd_context.hash(password)
 
 
-# Verify password against hashed version
 def verify_password(
     plain_password: str,
-    hashed_password: str
+    hashed_password: str,
 ) -> bool:
-
+    """
+    Verify a plain password against its hashed version.
+    """
     return pwd_context.verify(
         plain_password,
-        hashed_password
+        hashed_password,
     )
 
 
-# Create JWT token
-def create_access_token(data: dict):
+# -----------------------------------------------------
+# JWT / BEARER CONFIGURATION
+# -----------------------------------------------------
 
-    # Copy payload
+bearer_scheme = HTTPBearer()
+
+
+# -----------------------------------------------------
+# CREATE JWT TOKEN
+# -----------------------------------------------------
+
+def create_access_token(data: dict) -> str:
+    """
+    Generate a JWT access token with expiration.
+    """
+
     to_encode = data.copy()
 
-    # Define expiration time
     expire = datetime.now(timezone.utc) + timedelta(
         minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
     )
 
-    # Add expiration inside payload
-    to_encode.update({"exp": expire})
+    to_encode.update(
+        {
+            "exp": expire,
+        }
+    )
 
-    # Generate JWT token
     encoded_jwt = jwt.encode(
         to_encode,
         settings.JWT_SECRET,
-        algorithm=settings.JWT_ALGORITHM
+        algorithm=settings.JWT_ALGORITHM,
     )
 
     return encoded_jwt

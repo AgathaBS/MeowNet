@@ -11,7 +11,7 @@ from app.services import profile_service
 from app.dependencies.auth import get_current_user
 from app.models.user import User
 
-router = APIRouter(prefix="/profiles", tags=["Profiles"])
+router = APIRouter()
 
 
 @router.post("/", response_model=ProfileResponse)

@@ -27,8 +27,8 @@ Base.metadata.create_all(bind=engine)
 
 # Register  routes
 app.include_router(auth.router, prefix="/api/v1/auth")
-app.include_router(profile.router, prefix="/api/v1")
-app.include_router(cat.router, prefix="/api/v1")
+app.include_router(profile.router, prefix="/api/v1/profiles")
+app.include_router(cat.router, prefix="/api/v1/cats")
 
 # Root endpoint
 # Simple health check / welcome route

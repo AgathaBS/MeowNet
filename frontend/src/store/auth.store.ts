@@ -2,14 +2,18 @@ import { create } from "zustand";
 
 import type { User } from "../types/auth.types";
 
-/*
-  Global authentication store.
-
-  Handles:
-  - authenticated user
-  - JWT token
-  - login state persistence
-*/
+/**
+ * Global authentication store.
+ *
+ * Handles:
+ * - authenticated user
+ * - JWT token
+ * - login persistence
+ * - logout
+ *
+ * The store is resilient to corrupted
+ * localStorage values.
+ */
 
 interface AuthState {
   user: User | null;
@@ -18,52 +22,127 @@ interface AuthState {
 
   isAuthenticated: boolean;
 
-//Save authenticated user and JWT token.
-  setAuth: (user: User, token: string) => void;
+  /**
+   * Persist authenticated user and token.
+   */
+  setAuth: (
+    user: User,
+    token: string
+  ) => void;
 
-  //Clear authentication state.
+  /**
+   * Clear authentication state.
+   */
   logout: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  //Restore persisted user from localStorage.
-  user: localStorage.getItem("user")
-    ? JSON.parse(localStorage.getItem("user")!)
-    : null,
+/**
+ * Safely restore a user object from localStorage.
+ *
+ * Returns null if:
+ * - key does not exist
+ * - value is invalid
+ * - value is "undefined"
+ * - JSON parsing fails
+ */
+function getStoredUser(): User | null {
+  try {
+    const storedUser =
+      localStorage.getItem("user");
 
-  //Restore JWT token.
-  token: localStorage.getItem("token"),
+    if (
+      !storedUser ||
+      storedUser === "undefined" ||
+      storedUser === "null"
+    ) {
+      return null;
+    }
 
-  //Check if user is authenticated.
-  isAuthenticated: !!localStorage.getItem("token"),
-
-  setAuth: (user, token) => {
-    //Persist JWT token.
-    localStorage.setItem("token", token);
-
-    //Persist authenticated user.
-    localStorage.setItem(
-      "user",
-      JSON.stringify(user)
+    return JSON.parse(storedUser) as User;
+  } catch (error) {
+    console.error(
+      "Failed to restore user from localStorage:",
+      error
     );
 
-    set({
-      user,
-      token,
-      isAuthenticated: true,
-    });
-  },
-
-  logout: () => {
-
-    //Remove persisted authentication data.
-    localStorage.removeItem("token");
     localStorage.removeItem("user");
 
-    set({
-      user: null,
-      token: null,
-      isAuthenticated: false,
-    });
-  },
-}));
+    return null;
+  }
+}
+
+/**
+ * Safely restore JWT token.
+ */
+function getStoredToken(): string | null {
+  const token =
+    localStorage.getItem("token");
+
+  if (
+    !token ||
+    token === "undefined" ||
+    token === "null"
+  ) {
+    return null;
+  }
+
+  return token;
+}
+
+export const useAuthStore =
+  create<AuthState>((set) => {
+    const user = getStoredUser();
+
+    const token = getStoredToken();
+
+    return {
+      user,
+
+      token,
+
+      isAuthenticated: !!token,
+
+      setAuth: (user, token) => {
+        /**
+         * Persist JWT token.
+         */
+        localStorage.setItem(
+          "token",
+          token
+        );
+
+        /**
+         * Persist authenticated user.
+         */
+        localStorage.setItem(
+          "user",
+          JSON.stringify(user)
+        );
+
+        set({
+          user,
+          token,
+          isAuthenticated: true,
+        });
+      },
+
+      logout: () => {
+        /**
+         * Remove persisted authentication data.
+         */
+        localStorage.removeItem(
+          "token"
+        );
+
+        localStorage.removeItem(
+          "user"
+        );
+
+        set({
+          user: null,
+          token: null,
+          isAuthenticated: false,
+        });
+      },
+    };
+  });

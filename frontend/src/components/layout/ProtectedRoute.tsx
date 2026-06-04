@@ -8,9 +8,8 @@ interface Props {
 }
 
 export default function ProtectedRoute({ children }: Props) {
-  const token = useAuthStore((state) => state.token);
-
-  const isAuthenticated = !!token;
+  const isAuthenticated = useAuthStore(
+  (state) => state.isAuthenticated);
 
   // Block access if no valid token exists.
   if (!isAuthenticated) {
